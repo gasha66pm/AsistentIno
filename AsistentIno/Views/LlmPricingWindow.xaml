@@ -1,0 +1,32 @@
+<Window x:Class="AsistentIno.Views.LlmPricingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Cenovnik LLM-a" Height="500" Width="420"
+        Background="{StaticResource PrimaryBrush}" Foreground="{StaticResource TextBrush}"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <StackPanel Margin="16">
+        <TextBlock x:Name="LlmNameTextBlock" FontWeight="Bold" FontSize="16" Margin="0,0,0,12"/>
+
+        <TextBlock Text="Naziv modela (za cenovnik)"/>
+        <TextBox x:Name="ModelTextBox" Margin="0,4,0,10"/>
+
+        <TextBlock Text="Cena unosa po 1M tokena"/>
+        <TextBox x:Name="InputPriceTextBox" Margin="0,4,0,10"/>
+
+        <TextBlock Text="Cena izlaza po 1M tokena"/>
+        <TextBox x:Name="OutputPriceTextBox" Margin="0,4,0,10"/>
+
+        <TextBlock Text="Cena keširanog unosa po 1M tokena (opciono)"/>
+        <TextBox x:Name="CachedInputPriceTextBox" Margin="0,4,0,10"/>
+
+        <TextBlock Text="Cena upisa u keš po 1M tokena (opciono)"/>
+        <TextBox x:Name="CacheCreationPriceTextBox" Margin="0,4,0,10"/>
+
+        <CheckBox x:Name="ReasoningBilledAsOutputCheckBox" Content="Reasoning tokeni se naplaćuju po ceni izlaza" Margin="0,4,0,10"/>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button Content="Sačuvaj" Margin="0,0,8,0" Click="SaveButton_Click"/>
+            <Button Content="Zatvori" Click="CloseButton_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

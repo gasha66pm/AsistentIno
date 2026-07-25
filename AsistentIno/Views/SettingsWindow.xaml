@@ -1,0 +1,104 @@
+<Window x:Class="AsistentIno.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Konfiguracija" Height="680" Width="980"
+        Background="{StaticResource PrimaryBrush}" Foreground="{StaticResource TextBrush}"
+        WindowStartupLocation="CenterOwner">
+    <DockPanel Margin="12">
+        <Button DockPanel.Dock="Bottom" Content="Zatvori" HorizontalAlignment="Right"
+                Style="{StaticResource MainButtonStyle}" Margin="0,12,0,0" Click="CloseButton_Click"/>
+        <TabControl>
+            <TabItem Header="Agenti">
+                <Grid Margin="12">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="240"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <DockPanel Margin="0,0,12,0">
+                        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,10,0,0">
+                            <Button Content="Novi" Click="AddAgentButton_Click" Margin="0,0,8,0"/>
+                            <Button Content="Obriši" Click="DeleteAgentButton_Click"/>
+                        </StackPanel>
+                        <ListBox x:Name="AgentListBox" DisplayMemberPath="Name" SelectionChanged="AgentListBox_SelectionChanged"/>
+                    </DockPanel>
+                    <StackPanel Grid.Column="1" x:Name="AgentDetailsPanel">
+                        <TextBlock Text="Naziv"/><TextBox x:Name="AgentNameTextBox" Margin="0,4,0,10"/>
+                        <TextBlock Text="System prompt"/><TextBox x:Name="SystemPromptTextBox" Height="102" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="0,4,0,10"/>
+                        <TextBlock Text="LLM"/><ComboBox x:Name="AgentLlmCombo" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="0,4,0,10"/>
+                        <TextBlock Text="Reasoning effort"/><ComboBox x:Name="ReasoningCombo" Margin="0,4,0,10"/>
+                        <TextBlock Text="Dozvoljeni alati" Margin="0,0,0,4"/>
+                        <ListBox x:Name="ToolsListBox" Height="170">
+                            <CheckBox Content="interactive.ask" Margin="4"/>
+                            <CheckBox Content="file.writetext" Margin="4"/>
+                            <CheckBox Content="file.readtext" Margin="4"/>
+                            <CheckBox Content="file.list" Margin="4"/>
+                            <CheckBox Content="arduinocli.searchboards" Margin="4"/>
+                            <CheckBox Content="arduinocli.listalllibs" Margin="4"/>
+                            <CheckBox Content="arduinocli.compile" Margin="4"/>
+                        </ListBox>
+                        <Button Content="Sačuvaj agenta" HorizontalAlignment="Left" Margin="0,12,0,0" Click="SaveAgentButton_Click"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="LLM-ovi">
+                <Grid Margin="12">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="240"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <DockPanel Margin="0,0,12,0">
+                        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,10,0,0">
+                            <Button Content="Novi" Click="AddLLMButton_Click" Margin="0,0,8,0"/>
+                            <Button Content="Obriši" Click="DeleteLLMButton_Click"/>
+                        </StackPanel>
+                        <ListBox x:Name="LLMListBox" DisplayMemberPath="Name" SelectionChanged="LLMListBox_SelectionChanged"/>
+                    </DockPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Naziv"/><TextBox x:Name="LLMNameTextBox" Margin="0,4,0,10"/>
+                        <TextBlock Text="Model"/><TextBox x:Name="ModelTextBox" Margin="0,4,0,10"/>
+                        <TextBlock Text="Endpoint"/><TextBox x:Name="EndpointTextBox" Margin="0,4,0,10"/>
+                        <TextBlock Text="API key"/><PasswordBox x:Name="ApiKeyPasswordBox" Margin="0,4,0,10"/>
+                        <TextBlock Text="Procesor"/><ComboBox x:Name="ProcessorCombo" Margin="0,4,0,10"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                            <Button Content="Sačuvaj LLM" Margin="0,0,8,0" Click="SaveLLMButton_Click"/>
+                            <Button Content="Cene..." Click="EditPricingButton_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Podešavanja">
+                <StackPanel Margin="12">
+                    <TextBlock Text="Folder za podatke (Agents.json, LLMs.json)"/>
+                    <DockPanel Margin="0,4,0,10">
+                        <Button DockPanel.Dock="Right" Content="Izaberi..." Margin="8,0,0,0" Click="BrowseDataFolderButton_Click"/>
+                        <TextBox x:Name="DataFolderTextBox"/>
+                    </DockPanel>
+                    <DockPanel>
+                        <Button Content="Sačuvaj folder" Margin="0,0,8,0" HorizontalAlignment="Left" Click="SaveDataFolderButton_Click"/>
+                        <Button Content="Otvori folder" HorizontalAlignment="Left" Click="OpenDataFolderButton_Click"/>
+                    </DockPanel>
+                    <TextBlock Text="ArduinoCLI putanja: " Margin="0,10,0,0"/>
+                    <DockPanel Margin="0,4,0,10">
+                        <Button DockPanel.Dock="Right" Content="Izaberi..." Margin="8,0,0,0" Click="BrowseArduinoCLIButton_Click"/>
+                        <TextBox x:Name="ArduinoCLIPathTextBox"/>
+                    </DockPanel>
+                    <Button Content="Sačuvaj putanju" HorizontalAlignment="Left" Click="SaveArduinoCLIPathButton_Click"/>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Potrošnja">
+                <DockPanel Margin="12">
+                    <Button DockPanel.Dock="Top" Content="Osveži" HorizontalAlignment="Left" Margin="0,0,0,10" Click="RefreshUsageButton_Click"/>
+                    <DataGrid x:Name="UsageDataGrid" AutoGenerateColumns="False" IsReadOnly="True"
+                              CanUserAddRows="False" CanUserDeleteRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="LLM" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="Ukupno tokena" Binding="{Binding Usage.TotalTokens}" Width="140"/>
+                            <DataGridTextColumn Header="Ukupan trošak" Binding="{Binding Usage.TotalCost, StringFormat={}{0:0.000000}}" Width="140"/>
+                            <DataGridTemplateColumn Header="" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Detalji" Click="DetailsUsageButton_Click" Tag="{Binding}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>

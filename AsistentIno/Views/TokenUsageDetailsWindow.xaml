@@ -1,0 +1,60 @@
+<Window x:Class="AsistentIno.Views.TokenUsageDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Detalji potrošnje" Height="420" Width="420"
+        Background="{StaticResource PrimaryBrush}" Foreground="{StaticResource TextBrush}"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <StackPanel Margin="16">
+        <TextBlock x:Name="LlmNameTextBlock" FontWeight="Bold" FontSize="16" Margin="0,0,0,12"/>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Input tokeni"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" x:Name="InputTokensText"/>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Output tokeni"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="OutputTokensText"/>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Keširani input tokeni"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="CachedInputTokensText"/>
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Cache creation tokeni"/>
+            <TextBlock Grid.Row="3" Grid.Column="1" x:Name="CacheCreationTokensText"/>
+
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="Reasoning tokeni"/>
+            <TextBlock Grid.Row="4" Grid.Column="1" x:Name="ReasoningTokensText"/>
+
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="Tool-use tokeni"/>
+            <TextBlock Grid.Row="5" Grid.Column="1" x:Name="ToolUseTokensText"/>
+
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="Ukupno tokena" FontWeight="Bold"/>
+            <TextBlock Grid.Row="6" Grid.Column="1" x:Name="TotalTokensText" FontWeight="Bold"/>
+
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="Ukupan trošak" FontWeight="Bold"/>
+            <TextBlock Grid.Row="7" Grid.Column="1" x:Name="TotalCostText" FontWeight="Bold"/>
+
+            <TextBlock Grid.Row="8" Grid.Column="0" Text="Broj poziva"/>
+            <TextBlock Grid.Row="8" Grid.Column="1" x:Name="CallCountText"/>
+        </Grid>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Content="Reset" Margin="0,0,8,0" Click="ResetButton_Click"/>
+            <Button Content="Zatvori" Click="CloseButton_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

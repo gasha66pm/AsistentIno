@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <StartupObject>AsistentIno.App</StartupObject>
+    <AssemblyName>AsistentIno</AssemblyName>
+    <RootNamespace>AsistentIno</RootNamespace>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+
+
+  <ItemGroup>
+    <Folder Include="Assets\" />
+    <Folder Include="Data\" />
+    <Folder Include="ViewModels\" />
+  </ItemGroup>
+
+
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AsistentIno.Core\AsistentIno.Core.csproj" />
+    <ProjectReference Include="..\AsistentIno.Infrastructure\AsistentIno.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
