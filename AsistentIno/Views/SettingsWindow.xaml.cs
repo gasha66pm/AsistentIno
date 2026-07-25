@@ -27,6 +27,7 @@ public partial class SettingsWindow : Window
         ProcessorCombo.ItemsSource = Enum.GetValues<ProcessorType>();
         RefreshLists();
         DataFolderTextBox.Text = _configService.DataFolder;
+        ArduinoCLIPathTextBox.Text = _configService.CurrentConfig.ArduinoCliPath;
     }
 
     private void RefreshLists()
