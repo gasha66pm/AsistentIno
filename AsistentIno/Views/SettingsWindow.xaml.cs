@@ -19,6 +19,7 @@ public partial class SettingsWindow : Window
     private readonly ConfigService _configService = new();
     private AgentConfig? _currentAgent;
     private LLMConfig? _currentLlm;
+    private ArduinoCliService _arduinoService;
 
     public SettingsWindow()
     {
@@ -28,6 +29,8 @@ public partial class SettingsWindow : Window
         RefreshLists();
         DataFolderTextBox.Text = _configService.DataFolder;
         ArduinoCLIPathTextBox.Text = _configService.CurrentConfig.ArduinoCliPath;
+        _arduinoService = App.Services.GetService(typeof(ArduinoCliService)) as ArduinoCliService;
+        
     }
 
     private void RefreshLists()
@@ -189,5 +192,18 @@ public partial class SettingsWindow : Window
         ArduinoCLIPathTextBox.Text = _configService.CurrentConfig.ArduinoCliPath;
         RefreshLists();
         System.Windows.MessageBox.Show("ArduinoCLI putanja je sačuvana. Restartujte aplikaciju za primenu promena.", "Podešavanja", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    private async void TestArduinoCLIPathButton_Click(object sender, RoutedEventArgs e)
+    {
+        ArduinoStatusTextBox.Clear();
+        if (_arduinoService is null)
+        {
+            ArduinoStatusTextBox.Text = "ArduinoCLI servis nije dostupan.";
+            return;
+        }
+        var result = await _arduinoService.GetVersionAsync();
+        ArduinoStatusTextBox.Text = result;
+ 
     }
 }

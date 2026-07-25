@@ -76,7 +76,11 @@
                         <Button DockPanel.Dock="Right" Content="Izaberi..." Margin="8,0,0,0" Click="BrowseArduinoCLIButton_Click"/>
                         <TextBox x:Name="ArduinoCLIPathTextBox"/>
                     </DockPanel>
-                    <Button Content="Sačuvaj putanju" HorizontalAlignment="Left" Click="SaveArduinoCLIPathButton_Click"/>
+                    <DockPanel>
+                        <Button Content="Sačuvaj putanju" Margin="0,0,8,0" HorizontalAlignment="Left" Click="SaveArduinoCLIPathButton_Click"/>
+                        <Button Content="Test ArduinoCli" HorizontalAlignment="Left" Click="TestArduinoCLIPathButton_Click"/>
+                    </DockPanel>
+                    <TextBox x:Name="ArduinoStatusTextBox" IsReadOnly="True" Margin="0,4,0,10"/>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Potrošnja">
