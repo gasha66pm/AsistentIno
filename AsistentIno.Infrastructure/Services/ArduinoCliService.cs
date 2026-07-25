@@ -6,6 +6,9 @@ public class ArduinoCliService
 {
     private readonly string _arduinoCliPath;
 
+    public Task<string> GetVersionAsync(
+    CancellationToken cancellationToken = default) =>
+    RunCommandAsync(["version", "--json"], cancellationToken);
     public ArduinoCliService(string? customPath = null) => _arduinoCliPath = customPath ?? "arduino-cli.exe";
 
     public Task<string> ListAllBoardsAsync(CancellationToken cancellationToken = default) =>
