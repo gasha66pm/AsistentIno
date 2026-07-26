@@ -35,7 +35,16 @@
             <Button Content="💾 Snimi fajl" Style="{StaticResource MainButtonStyle}"
                     Command="{Binding SaveFileCommand}" Margin="0,0,10,0"/>
         </StackPanel>
-
+        <!-- Status / Notifications -->
+        <Border DockPanel.Dock="Bottom"
+                        Padding="1" Margin="1,0,1,1" CornerRadius="4" MinHeight="20" MaxHeight="20" Height="20" Background="#FFDBE9E9">
+            <TextBlock Text="{Binding StatusMessage}"
+                               Foreground="{StaticResource TextBrush}"
+                               FontSize="10" Opacity="0.8"
+                               TextWrapping="Wrap"
+                               TextTrimming="CharacterEllipsis"
+                               MaxHeight="20"/>
+        </Border>
         <!-- Main Content -->
         <Grid>
             <Grid.ColumnDefinitions>
@@ -97,7 +106,7 @@
 
                 <!-- Messages -->
                 <ScrollViewer DockPanel.Dock="Top" VerticalScrollBarVisibility="Auto" 
-                              Height="400" Margin="0,10,0,10">
+                              Height="360" Margin="0,10,0,10">
                     <ItemsControl ItemsSource="{Binding AgentMessages}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -181,16 +190,7 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!-- Status / Notifications -->
-                <Border DockPanel.Dock="Bottom"
-                        Padding="1" Margin="1,0,1,1" CornerRadius="4" MinHeight="45" MaxHeight="45" Height="45" Background="#FFDBE9E9">
-                    <TextBlock Text="{Binding StatusMessage}"
-                               Foreground="{StaticResource TextBrush}"
-                               FontSize="10" Opacity="0.8"
-                               TextWrapping="Wrap"
-                               TextTrimming="CharacterEllipsis"
-                               MaxHeight="45"/>
-                </Border>
+
             </DockPanel>
         </Grid>
     </DockPanel>
