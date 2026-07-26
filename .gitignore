@@ -49,3 +49,5 @@ bld/
 ## OS fajlovi
 .DS_Store
 Thumbs.db
+/AsistentIno/Properties/PublishProfiles
+/AsistentIno/AsistentIno.csproj.user
