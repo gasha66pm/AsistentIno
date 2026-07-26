@@ -110,15 +110,35 @@
                     <ItemsControl ItemsSource="{Binding AgentMessages}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Margin="5" Padding="10" CornerRadius="4"
-                                        Background="{StaticResource SecondaryBrush}">
+                                <Border Margin="5" Padding="10" CornerRadius="4">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="White"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Role}" Value="assistant">
+                                                    <Setter Property="Background" Value="#e6eff0"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
                                     <StackPanel>
-                                        <TextBlock Text="{Binding Role, StringFormat='[{0}]'}" 
-                                                   FontWeight="Bold" FontSize="11" Foreground="{StaticResource AccentBrush}"/>
-                                        <TextBlock Text="{Binding Content}" 
-                                                   TextWrapping="Wrap" Margin="0,5,0,0" FontSize="11"/>
-                                        <TextBlock Text="{Binding Timestamp, StringFormat='HH:mm:ss'}" 
-                                                   FontSize="9" Opacity="0.6" Margin="0,5,0,0"/>
+                                        <TextBlock Text="{Binding Role, StringFormat='[{0}]'}"
+                    FontWeight="Bold" FontSize="11">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#003366"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Role}" Value="assistant">
+                                                            <Setter Property="Foreground" Value="#cc2e23"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding Content}"
+                    TextWrapping="Wrap" Margin="0,5,0,0" FontSize="11"/>
+                                        <TextBlock Text="{Binding Timestamp, StringFormat='HH:mm:ss'}"
+                    FontSize="9" Opacity="0.6" Margin="0,5,0,0"/>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>
