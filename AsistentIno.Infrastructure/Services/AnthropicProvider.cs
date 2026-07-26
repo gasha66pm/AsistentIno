@@ -114,7 +114,7 @@ public class AnthropicProvider : ILLMProvider
                 messages.Add(new { role = "user", content = resultBlocks });
             }
 
-            _notification?.Notify($"{ProviderType}: finished processing with tool calls");
+            //_notification?.Notify($"{ProviderType}: finished processing with tool calls");
             return new() { Error = "Agent je prekoračio maksimalan broj uzastopnih tool poziva." };
         }
         catch (OperationCanceledException) { return new() { Error = "Operacija je otkazana." }; }

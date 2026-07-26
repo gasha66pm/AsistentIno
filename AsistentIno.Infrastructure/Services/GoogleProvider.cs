@@ -127,7 +127,7 @@ public class GeminiProvider : ILLMProvider
                         var name = step.GetProperty("name").GetString() ?? string.Empty;
                         var args = step.GetProperty("arguments");
                         var argsJson = args.GetRawText();
-                        _notification.Notify("Gemini je zatražio poziv alata: " + name);
+                        //_notification.Notify("Gemini je zatražio poziv alata: " + name);
                         var result = await _tools.ExecuteAsync(name, args, cancellationToken);
                         executedCalls.Add(new ToolCall
                         {

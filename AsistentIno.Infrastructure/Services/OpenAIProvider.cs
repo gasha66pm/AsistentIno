@@ -97,7 +97,7 @@ public class OpenAIProvider : ILLMProvider
                     var name = function.GetProperty("name").GetString() ?? string.Empty;
                     var argumentsJson = function.GetProperty("arguments").GetString() ?? "{}";
                     using var argsDoc = JsonDocument.Parse(argumentsJson);
-                    _notification.Notify("Executing tool call: " + name);
+                    //_notification.Notify("Executing tool call: " + name);
                     var result = await _tools.ExecuteAsync(name, argsDoc.RootElement, cancellationToken);
                     executedCalls.Add(new ToolCall
                     {
@@ -110,7 +110,7 @@ public class OpenAIProvider : ILLMProvider
                 }
             }
 
-                _notification.Notify($"{ProviderType}: finished processing with tool calls");
+                //_notification.Notify($"{ProviderType}: finished processing with tool calls");
                 return new() { Error = "Agent je prekoračio maksimalan broj uzastopnih tool poziva." };
         }
         catch (OperationCanceledException) { return new() { Error = "Operacija je otkazana." }; }

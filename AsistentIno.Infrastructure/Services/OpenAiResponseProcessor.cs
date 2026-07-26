@@ -109,7 +109,7 @@ public class ResponsesProvider : ILLMProvider
                             arguments = argumentsJson
                         });
 
-                        _notification.Notify("Executing tool call: " + name);
+                        //_notification.Notify("Executing tool call: " + name);
                         // Izvrši tool
                         using var argsDoc = JsonDocument.Parse(argumentsJson);
                         var result = await _tools.ExecuteAsync(name, argsDoc.RootElement, cancellationToken);
