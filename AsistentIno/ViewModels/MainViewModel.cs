@@ -182,6 +182,18 @@ public class MainViewModel : ViewModelBase
 
         LoadAgents();
         _dataFolder = _fileService.CurrentFolder;
+        if (string.IsNullOrEmpty(_dataFolder))
+        {
+            _dataFolder = configService.CurrentConfig.LastOpenedFolder;
+            _fileService.SetCurrentFolder(_dataFolder);
+        }
+        if (!string.IsNullOrEmpty(_dataFolder))
+        {
+            foreach (var file in _fileService.GetCodeFiles())
+                OpenFiles.Add(file);
+            SelectedFilePath = OpenFiles.FirstOrDefault() ?? "";
+        }
+
     }
 
     private void OnToolRegistryStatusChanged(string message)
