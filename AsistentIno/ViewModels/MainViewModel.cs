@@ -30,6 +30,21 @@ public class MainViewModel : ViewModelBase
     private string _statusMessage = "";
     private string _dataFolder = "";
 
+    private bool _isSyntaxHighlightingEnabled = true;
+
+    public bool IsSyntaxHighlightingEnabled
+    {
+        get => _isSyntaxHighlightingEnabled;
+        set
+        {
+            if (_isSyntaxHighlightingEnabled == value)
+                return;
+
+            _isSyntaxHighlightingEnabled = value;
+            OnPropertyChanged();
+        }
+    }
+
     public ObservableCollection<string> OpenFiles { get; } = [];
     public ObservableCollection<AgentMessage> AgentMessages { get; } = [];
     public ObservableCollection<AgentConfig> AvailableAgents { get; } = [];
@@ -259,6 +274,10 @@ public class MainViewModel : ViewModelBase
         try
         {
             SelectedFileContent = _fileService.ReadFile(SelectedFilePath);
+            if (SelectedFilePath.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
+                IsSyntaxHighlightingEnabled = false;
+            else
+                IsSyntaxHighlightingEnabled = true;
         }
         catch (Exception ex)
         {

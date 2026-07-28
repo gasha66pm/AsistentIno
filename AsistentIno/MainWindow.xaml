@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
         xmlns:controls="clr-namespace:AsistentIno.Controls"
+        xmlns:local="clr-namespace:AsistentIno.Converters"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"   
         mc:Ignorable="d"
         Title="AsistentIno - AI Asistent za Arduino razvoj"
         Height="900"
@@ -12,7 +13,9 @@
         Background="{StaticResource PrimaryBrush}"
         Foreground="{StaticResource TextBrush}"
         WindowStartupLocation="CenterScreen" WindowState="Maximized">
-
+<Window.Resources>
+    <local:SyntaxHighlightingConverter x:Key="SyntaxHighlightingConverter" />
+</Window.Resources>
     <DockPanel LastChildFill="True">
         <Border DockPanel.Dock="Top" Background="#0F172A" Padding="18,12">
             <DockPanel>
@@ -101,7 +104,7 @@
                          VerticalScrollBarVisibility="Auto"
                          HorizontalScrollBarVisibility="Auto"
                          Padding="10"/>-->
-                <avalonedit:TextEditor DockPanel.Dock="Bottom"
+                <!--<avalonedit:TextEditor DockPanel.Dock="Bottom"
                         controls:AvalonEditBinding.Text="{Binding SelectedFileContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         SyntaxHighlighting="C++"
                        Background="{StaticResource PrimaryBrush}"
@@ -112,7 +115,17 @@
                        HorizontalScrollBarVisibility="Auto"
                        VerticalScrollBarVisibility="Auto"
                        Padding="10"
-                       WordWrap="False" />
+                       WordWrap="False" />-->
+                <avalonedit:TextEditor
+    DockPanel.Dock="Bottom"
+    controls:AvalonEditBinding.Text="{Binding SelectedFileContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+    SyntaxHighlighting="{Binding IsSyntaxHighlightingEnabled,Converter={StaticResource SyntaxHighlightingConverter}}"
+    Background="{StaticResource PrimaryBrush}"
+    Foreground="{StaticResource TextBrush}"
+    FontFamily="Consolas"
+    FontSize="12"
+    ShowLineNumbers="True"
+    WordWrap="False" />
             </DockPanel>
 
             <!-- Splitter -->
