@@ -24,7 +24,7 @@ namespace AsistentIno
             services.AddSingleton<INotificationService, NotificationService>();
             services.AddSingleton<ConfigService>();
             services.AddSingleton<FileService>();
-            services.AddSingleton<ArduinoCliService>(sp => new ArduinoCliService(sp.GetRequiredService<ConfigService>().CurrentConfig.ArduinoCliPath));
+            services.AddSingleton<IArduinoCliService>(sp => new ArduinoCliService(sp.GetRequiredService<ConfigService>().CurrentConfig.ArduinoCliPath));
 
             // Infrastructure
             services.AddSingleton<ToolRegistry>();

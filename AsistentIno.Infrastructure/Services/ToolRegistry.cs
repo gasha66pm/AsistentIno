@@ -6,11 +6,11 @@ namespace AsistentIno.Services;
 public sealed class ToolRegistry
 {
     private readonly FileService _files;
-    private readonly ArduinoCliService _arduinoCli;
+    private readonly IArduinoCliService _arduinoCli;
     private readonly AsistentIno.Services.INotificationService? _notification;
     private readonly Dictionary<string, RegisteredTool> _tools;
 
-    public ToolRegistry(FileService files, ArduinoCliService arduinoCli, AsistentIno.Services.INotificationService? notification = null)
+    public ToolRegistry(FileService files, IArduinoCliService arduinoCli, AsistentIno.Services.INotificationService? notification = null)
     {
         _files = files;
         _arduinoCli = arduinoCli;

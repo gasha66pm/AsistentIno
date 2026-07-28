@@ -2,15 +2,22 @@ using System.Diagnostics;
 
 namespace AsistentIno.Services;
 
-public class ArduinoCliService
+public class ArduinoCliService : IArduinoCliService
 {
-    private readonly string _arduinoCliPath;
+    private string _arduinoCliPath;
+
+    public string ArduinoCliPath => _arduinoCliPath;
+
+    public ArduinoCliService(string? customPath = null)
+    {
+        _arduinoCliPath = GetEffectivePath(customPath);
+    }
+
+    public void SetArduinoCliPath(string? path) => _arduinoCliPath = GetEffectivePath(path);
 
     public Task<string> GetVersionAsync(
     CancellationToken cancellationToken = default) =>
     RunCommandAsync(["version", "--json"], cancellationToken);
-    public ArduinoCliService(string? customPath = null) => _arduinoCliPath = customPath ?? "arduino-cli.exe";
-
     public Task<string> ListAllBoardsAsync(CancellationToken cancellationToken = default) =>
         RunCommandAsync(["board", "listall"], cancellationToken);
 
@@ -66,4 +73,7 @@ public class ArduinoCliService
 
         return string.IsNullOrWhiteSpace(stderr) ? stdout.Trim() : $"{stdout.Trim()}\n{stderr.Trim()}".Trim();
     }
+
+    private static string GetEffectivePath(string? path) =>
+        string.IsNullOrWhiteSpace(path) ? "arduino-cli.exe" : path.Trim();
 }
