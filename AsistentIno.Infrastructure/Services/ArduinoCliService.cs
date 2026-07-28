@@ -24,7 +24,13 @@ public class ArduinoCliService : IArduinoCliService
     public Task<string> SearchBoardsAsync(string boardname,CancellationToken cancellationToken = default) =>
     RunCommandAsync(["board", "search", boardname], cancellationToken);
 
+    public Task<string> SearchLibrariesAsync(string libstring, CancellationToken cancellationToken = default) =>
+        RunCommandAsync(["lib", "search", libstring], cancellationToken);
+
     public Task<string> ListAllLibrariesAsync(CancellationToken cancellationToken = default) =>
+        RunCommandAsync(["lib", "list","--all"], cancellationToken);
+
+    public Task<string> ListInstalledLibrariesAsync(CancellationToken cancellationToken = default) =>
         RunCommandAsync(["lib", "list"], cancellationToken);
 
     public Task<string> CompileAsync(string sketchPath, string fqbn, CancellationToken cancellationToken) =>

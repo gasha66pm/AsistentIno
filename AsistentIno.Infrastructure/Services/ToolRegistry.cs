@@ -71,12 +71,12 @@ public sealed class ToolRegistry
                     return Task.FromResult(ToolExecutionResult.Ok(items.Count == 0 ? "(nema fajlova)" : string.Join('\n', items)));
                 }),
 
-            ["arduinocli.listallboards"] = Register(
-                Descriptor(
-                    "arduinocli.listallboards", "arduinocli_listallboards",
-                    "Lista sve board platforme poznate Arduino CLI-ju.",
-                    ObjectSchema()),
-                async (_, ct) => ToolExecutionResult.Ok(await _arduinoCli.ListAllBoardsAsync(ct))),
+            //["arduinocli.listallboards"] = Register(
+            //    Descriptor(
+            //        "arduinocli.listallboards", "arduinocli_listallboards",
+            //        "Lista sve board platforme poznate Arduino CLI-ju.",
+            //        ObjectSchema()),
+            //    async (_, ct) => ToolExecutionResult.Ok(await _arduinoCli.ListAllBoardsAsync(ct))),
             ["arduinocli.searchboards"] = Register(
                 Descriptor(
                     "arduinocli.searchboards", "arduinocli_searchboards",
@@ -86,13 +86,27 @@ public sealed class ToolRegistry
                     var boardname =RequireString(args, "boardname");
                     return ToolExecutionResult.Ok(await _arduinoCli.SearchBoardsAsync(boardname, ct)); 
                 }),
-
-            ["arduinocli.listalllibs"] = Register(
+            ["arduinocli.searchlibs"] = Register(
                 Descriptor(
-                    "arduinocli.listalllibs", "arduinocli_listalllibs",
-                    "Lista instalirane Arduino biblioteke.",
+                    "arduinocli.searchlibs", "arduinocli_searchlibs",
+                    "Pretražuje biblioteke poznate Arduino CLI-ju. libstring moze da bude deo imena ili ako se trazi lib po tacnom nazivu libstring je name=<naziv_biblioteke>",
+                    ObjectSchema(("libstring", StringSchema("Naziv biblioteke", true)))),
+                async (args, ct) => {
+                    var libstring = RequireString(args, "libstring");
+                    return ToolExecutionResult.Ok(await _arduinoCli.SearchLibrariesAsync(libstring, ct));
+                }),
+            //["arduinocli.listalllibs"] = Register(
+            //    Descriptor(
+            //        "arduinocli.listalllibs", "arduinocli_listalllibs",
+            //        "Lista svih Arduino biblioteka poznatih Arduino CLI-ju.",
+            //        ObjectSchema()),
+            //    async (_, ct) => ToolExecutionResult.Ok(await _arduinoCli.ListAllLibrariesAsync(ct))),
+            ["arduinocli.installedlibs"] = Register(
+                Descriptor(
+                    "arduinocli.installedlibs", "arduinocli_installedlibs",
+                    "Lista instaliranih Arduino biblioteka.",
                     ObjectSchema()),
-                async (_, ct) => ToolExecutionResult.Ok(await _arduinoCli.ListAllLibrariesAsync(ct))),
+                async (_, ct) => ToolExecutionResult.Ok(await _arduinoCli.ListInstalledLibrariesAsync(ct))),
 
             ["arduinocli.compile"] = Register(
                 Descriptor(

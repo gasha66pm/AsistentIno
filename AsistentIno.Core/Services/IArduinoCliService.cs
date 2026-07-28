@@ -19,4 +19,7 @@ public interface IArduinoCliService
     Task<List<string>> ListBoardsAsync();
 
     Task<List<string>> ListLibrariesAsync();
+
+    Task<string> SearchLibrariesAsync(string libstring, CancellationToken cancellationToken = default);
+    Task<string> ListInstalledLibrariesAsync(CancellationToken cancellationToken = default);
 }

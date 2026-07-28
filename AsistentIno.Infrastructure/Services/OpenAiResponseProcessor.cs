@@ -54,7 +54,7 @@ public class ResponsesProvider : ILLMProvider
 
                 if (AddReasoningEffort && agent.ReasoningEffort != ReasoningEffort.None)
                     body["reasoning_effort"] = agent.ReasoningEffort.ToString().ToLowerInvariant();
-                _notification.Notify("Sending request to OpenAI API...");
+                //_notification.Notify("Sending request to OpenAI API...");
                 var baseUrl = string.IsNullOrWhiteSpace(config.Endpoint) ? DefaultEndpoint : config.Endpoint.TrimEnd('/');
                 using var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/responses") { Content = JsonContent.Create(body) };
                 request.Headers.Authorization = new("Bearer", config.ApiKey);
