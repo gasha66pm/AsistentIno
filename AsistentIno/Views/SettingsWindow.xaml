@@ -30,7 +30,8 @@
                             <CheckBox Content="file.readtext" Margin="4"/>
                             <CheckBox Content="file.list" Margin="4"/>
                             <CheckBox Content="arduinocli.searchboards" Margin="4"/>
-                            <CheckBox Content="arduinocli.listalllibs" Margin="4"/>
+                            <CheckBox Content="arduinocli.searchlibs" Margin="4"/>
+                            <CheckBox Content="arduinocli.installedlibs" Margin="4"/>
                             <CheckBox Content="arduinocli.compile" Margin="4"/>
                         </ListBox>
                         <Button Content="Sačuvaj agenta" HorizontalAlignment="Left" Margin="0,12,0,0" Click="SaveAgentButton_Click"/>

@@ -24,7 +24,7 @@ public class OpenAIProvider : ILLMProvider
 
     public async Task<LLMResponse> SendMessageAsync(LLMConfig config, AgentConfig agent, List<AgentMessage> history, string userMessage, MessageAttachment? attachment = null, CancellationToken cancellationToken = default)
     {
-        _notification.Notify($"{ProviderType}: sending request...");
+        //_notification.Notify($"{ProviderType}: sending request...");
         try
         {
             var messages = new List<object> { new { role = "system", content = agent.SystemPrompt } };
@@ -54,7 +54,7 @@ public class OpenAIProvider : ILLMProvider
                 var baseUrl = string.IsNullOrWhiteSpace(config.Endpoint) ? DefaultEndpoint : config.Endpoint.TrimEnd('/');
                 using var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/chat/completions") { Content = JsonContent.Create(body) };
                 request.Headers.Authorization = new("Bearer", config.ApiKey);
-                _notification.Notify ($"Sending request to OpenAI: /chat/completions (model: {config.Model})");
+                //_notification.Notify ($"Sending request to OpenAI: /chat/completions (model: {config.Model})");
                 using var response = await _httpClient.SendAsync(request, cancellationToken);
                 var json = await response.Content.ReadAsStringAsync(cancellationToken);
                 if (!response.IsSuccessStatusCode)

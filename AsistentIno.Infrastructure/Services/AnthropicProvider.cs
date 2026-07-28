@@ -23,7 +23,7 @@ public class AnthropicProvider : ILLMProvider
 
     public async Task<LLMResponse> SendMessageAsync(LLMConfig config, AgentConfig agent, List<AgentMessage> history, string userMessage, MessageAttachment? attachment = null, CancellationToken cancellationToken = default)
     {
-        _notification?.Notify($"{ProviderType}: sending request...");
+        //_notification?.Notify($"{ProviderType}: sending request...");
         try
         {
             var messages = history.Select(x => (object)new { role = x.Role, content = x.Content }).ToList();
