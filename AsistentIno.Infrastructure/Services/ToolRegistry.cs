@@ -83,7 +83,7 @@ public sealed class ToolRegistry
                     "Pretražuje board platforme poznate Arduino CLI-ju.",
                     ObjectSchema(("boardname", StringSchema("Naziv boarda", true)))),
                 async (args, ct) => {
-                    var boardname = _files.ResolveWorkspacePath(RequireString(args, "boardname"));
+                    var boardname =RequireString(args, "boardname");
                     return ToolExecutionResult.Ok(await _arduinoCli.SearchBoardsAsync(boardname, ct)); 
                 }),
 
