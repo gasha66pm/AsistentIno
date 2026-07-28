@@ -11,7 +11,7 @@ public class MainViewModel : ViewModelBase
 {
     private readonly ConfigService _configService;
     private readonly FileService _fileService;
-    private readonly ArduinoCliService _arduinoCliService;
+    private readonly IArduinoCliService _arduinoCliService;
     private readonly ToolRegistry _toolRegistry;
     private readonly LLMProviderFactory _providerFactory;
     private readonly INotificationService? _notificationService;
@@ -154,7 +154,7 @@ public class MainViewModel : ViewModelBase
     }
 
     // DI constructor
-    public MainViewModel(ConfigService configService, FileService fileService, ArduinoCliService arduinoCliService, ToolRegistry toolRegistry, LLMProviderFactory providerFactory, INotificationService? notificationService = null)
+    public MainViewModel(ConfigService configService, FileService fileService, IArduinoCliService arduinoCliService, ToolRegistry toolRegistry, LLMProviderFactory providerFactory, INotificationService? notificationService = null)
     {
         _configService = configService;
         _fileService = fileService;
@@ -534,7 +534,7 @@ public class MainViewModel : ViewModelBase
     }
     private void OpenSettings()
     {
-        var window = new Views.SettingsWindow
+        var window = new Views.SettingsWindow(_configService, _arduinoCliService)
         {
             Owner = System.Windows.Application.Current.MainWindow
         };
