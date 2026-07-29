@@ -24,7 +24,7 @@
                         <TextBlock Text="LLM"/><ComboBox x:Name="AgentLlmCombo" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="0,4,0,10"/>
                         <TextBlock Text="Reasoning effort"/><ComboBox x:Name="ReasoningCombo" Margin="0,4,0,10"/>
                         <TextBlock Text="Dozvoljeni alati" Margin="0,0,0,4"/>
-                        <ListBox x:Name="ToolsListBox" Height="170">
+                        <ListBox x:Name="ToolsListBox" Height="150">
                             <CheckBox Content="interactive.ask" Margin="4"/>
                             <CheckBox Content="file.writetext" Margin="4"/>
                             <CheckBox Content="file.readtext" Margin="4"/>
