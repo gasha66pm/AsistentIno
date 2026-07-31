@@ -1,5 +1,6 @@
 using System.Collections.Specialized;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 using AsistentIno.ViewModels;
 
@@ -37,5 +38,28 @@ public partial class MainWindow : Window
     {
         _viewModel.AgentMessages.CollectionChanged -= AgentMessages_CollectionChanged;
         Closed -= MainWindow_Closed;
+    }
+
+    private void MarkdownScrollViewer_PreviewMouseWheel(
+    object sender,
+    MouseWheelEventArgs e)
+    {
+        AgentMessagesScrollViewer.ScrollToVerticalOffset(
+            AgentMessagesScrollViewer.VerticalOffset - e.Delta);
+
+        e.Handled = true;
+    }
+
+    private void CopyMessage_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not System.Windows.Controls.Button button)
+            return;
+
+        var content = button.CommandParameter?.ToString();
+
+        if (string.IsNullOrEmpty(content))
+            return;
+
+        System.Windows.Clipboard.SetText(content);
     }
 }

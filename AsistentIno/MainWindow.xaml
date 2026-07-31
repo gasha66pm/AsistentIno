@@ -4,6 +4,7 @@
         xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
         xmlns:controls="clr-namespace:AsistentIno.Controls"
         xmlns:local="clr-namespace:AsistentIno.Converters"
+        xmlns:md="clr-namespace:MdXaml;assembly=MdXaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"   
         mc:Ignorable="d"
@@ -160,21 +161,40 @@
                                         </Style>
                                     </Border.Style>
                                     <StackPanel>
-                                        <TextBlock Text="{Binding Role, StringFormat='[{0}]'}"
-                    FontWeight="Bold" FontSize="11">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Foreground" Value="#003366"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Role}" Value="assistant">
-                                                            <Setter Property="Foreground" Value="#cc2e23"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                        <TextBlock Text="{Binding Content}"
-                    TextWrapping="Wrap" Margin="0,5,0,0" FontSize="11"/>
+                                        <DockPanel>
+                                            <Button DockPanel.Dock="Right"
+                                                Content="📋"
+                                                CommandParameter="{Binding Content}"
+                                                Click="CopyMessage_Click"
+                                                Padding="4,1"
+                                                BorderThickness="0"
+                                                Background="Transparent"
+                                                ToolTip="Kopiraj poruku"
+                                                Cursor="Hand"/>
+
+                                            <TextBlock Text="{Binding Role, StringFormat='[{0}]'}"
+                                                   FontWeight="Bold"
+                                                   FontSize="11">   
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#003366"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Role}" Value="assistant">
+                                                                <Setter Property="Foreground" Value="#cc2e23"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </DockPanel>
+                                        <md:MarkdownScrollViewer
+                                            Markdown="{Binding Content}"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Margin="0,5,0,0"
+                                            FontSize="8"
+                                            VerticalScrollBarVisibility="Disabled"
+                                            PreviewMouseWheel="MarkdownScrollViewer_PreviewMouseWheel"/>        
                                         <TextBlock Text="{Binding Timestamp, StringFormat='HH:mm:ss'}"
                     FontSize="9" Opacity="0.6" Margin="0,5,0,0"/>
                                     </StackPanel>
