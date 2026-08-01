@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -49,15 +50,50 @@ public class MainViewModel : ViewModelBase
     public ObservableCollection<AgentMessage> AgentMessages { get; } = [];
     public ObservableCollection<AgentConfig> AvailableAgents { get; } = [];
 
-    public string SelectedFilePath
+    public string? SelectedFilePath
     {
         get => _selectedFilePath;
         set
         {
-            SetProperty(ref _selectedFilePath, value);
+            if (_selectedFilePath == value)
+                return;
+
+            _selectedFilePath = value;
+
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsSvgFile));
+            OnPropertyChanged(nameof(SelectedFileUri));
+
             LoadFileContent();
         }
     }
+
+    public bool IsSvgFile =>
+    !string.IsNullOrWhiteSpace(SelectedFilePath) &&
+    string.Equals(
+        Path.GetExtension(SelectedFilePath),
+        ".svg",
+        StringComparison.OrdinalIgnoreCase);
+
+    public Uri? SelectedFileUri
+    {
+        get
+        {
+            if (!IsSvgFile ||
+                string.IsNullOrWhiteSpace(SelectedFilePath) ||
+                !File.Exists(SelectedFilePath))
+            {
+                return null;
+            }
+
+            return new Uri(
+                Path.GetFullPath(SelectedFilePath),
+                UriKind.Absolute);
+        }
+    }
+
+
+
     public string DataFolder
     {
         get => _dataFolder;

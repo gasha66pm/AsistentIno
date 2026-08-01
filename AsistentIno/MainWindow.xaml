@@ -5,6 +5,7 @@
         xmlns:controls="clr-namespace:AsistentIno.Controls"
         xmlns:local="clr-namespace:AsistentIno.Converters"
         xmlns:md="clr-namespace:MdXaml;assembly=MdXaml"
+        xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"   
         mc:Ignorable="d"
@@ -14,9 +15,11 @@
         Background="{StaticResource PrimaryBrush}"
         Foreground="{StaticResource TextBrush}"
         WindowStartupLocation="CenterScreen" WindowState="Maximized">
-<Window.Resources>
-    <local:SyntaxHighlightingConverter x:Key="SyntaxHighlightingConverter" />
-</Window.Resources>
+    <Window.Resources>
+        <local:SyntaxHighlightingConverter x:Key="SyntaxHighlightingConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+    </Window.Resources>
     <DockPanel LastChildFill="True">
         <Border DockPanel.Dock="Top" Background="#0F172A" Padding="18,12">
             <DockPanel>
@@ -61,72 +64,58 @@
 
             <!-- Left: Code Editor Section -->
             <DockPanel Grid.Column="0" Background="{StaticResource PrimaryBrush}">
-                <!-- File Tabs -->
-                <TabControl DockPanel.Dock="Top" Background="{StaticResource SecondaryBrush}"
-                            ItemsSource="{Binding OpenFiles}"
-                            SelectedItem="{Binding SelectedFilePath, Mode=TwoWay}"
-                              MinHeight="30"
-                              MaxHeight="60"
-                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ComboBox DockPanel.Dock="Top"
+          ItemsSource="{Binding OpenFiles}"
+          SelectedItem="{Binding SelectedFilePath, Mode=TwoWay}"
+          Background="{StaticResource SecondaryBrush}"
+          Foreground="{StaticResource TextBrush}"
+          MinHeight="30"
+          Margin="5"
+          Padding="6">
 
-                    <TabControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </TabControl.ItemsPanel>
-
-                    <TabControl.ItemContainerStyle>
-                        <Style TargetType="TabItem">
-                            <Setter Property="Padding" Value="8,2"/>
-                            <Setter Property="MaxWidth" Value="140"/>
-                            <Setter Property="Height" Value="20"/>
-                        </Style>
-                    </TabControl.ItemContainerStyle>
-                    
-                    <TabControl.ItemTemplate>
+                    <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Converter={StaticResource FileNameConverter}}"
-                                       ToolTip="{Binding}"
-                                       TextTrimming="CharacterEllipsis"
-                                       FontSize="11"/>
+                       ToolTip="{Binding}"
+                       TextTrimming="CharacterEllipsis"
+                       FontSize="11"/>
                         </DataTemplate>
-                    </TabControl.ItemTemplate>
-                </TabControl>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
 
                 <!-- Editor -->
-                <!--<TextBox DockPanel.Dock="Bottom" 
-                         Text="{Binding SelectedFileContent, UpdateSourceTrigger=PropertyChanged}"
-                         Background="{StaticResource PrimaryBrush}"
-                         Foreground="{StaticResource TextBrush}"
-                         FontFamily="Consolas"
-                         FontSize="12"
-                         AcceptsReturn="True"
-                         AcceptsTab="True"
-                         VerticalScrollBarVisibility="Auto"
-                         HorizontalScrollBarVisibility="Auto"
-                         Padding="10"/>-->
-                <!--<avalonedit:TextEditor DockPanel.Dock="Bottom"
-                        controls:AvalonEditBinding.Text="{Binding SelectedFileContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        SyntaxHighlighting="C++"
-                       Background="{StaticResource PrimaryBrush}"
-                       Foreground="{StaticResource TextBrush}"
-                       FontFamily="Consolas"
-                       FontSize="12"
-                       ShowLineNumbers="True"
-                       HorizontalScrollBarVisibility="Auto"
-                       VerticalScrollBarVisibility="Auto"
-                       Padding="10"
-                       WordWrap="False" />-->
-                <avalonedit:TextEditor
-    DockPanel.Dock="Bottom"
-    controls:AvalonEditBinding.Text="{Binding SelectedFileContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-    SyntaxHighlighting="{Binding IsSyntaxHighlightingEnabled,Converter={StaticResource SyntaxHighlightingConverter}}"
-    Background="{StaticResource PrimaryBrush}"
-    Foreground="{StaticResource TextBrush}"
-    FontFamily="Consolas"
-    FontSize="12"
-    ShowLineNumbers="True"
-    WordWrap="False" />
+
+                <Grid DockPanel.Dock="Bottom">
+
+                    <avalonedit:TextEditor
+        controls:AvalonEditBinding.Text="{Binding SelectedFileContent,
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
+        SyntaxHighlighting="{Binding IsSyntaxHighlightingEnabled,
+                                     Converter={StaticResource SyntaxHighlightingConverter}}"
+        Background="{StaticResource PrimaryBrush}"
+        Foreground="{StaticResource TextBrush}"
+        FontFamily="Consolas"
+        FontSize="12"
+        ShowLineNumbers="True"
+        WordWrap="False"
+        HorizontalScrollBarVisibility="Auto"
+        VerticalScrollBarVisibility="Auto"
+        Visibility="{Binding IsSvgFile,
+                             Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+
+                    <Border
+        Background="White"
+        Padding="20"
+        Visibility="{Binding IsSvgFile,
+                             Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                        <svgc:SvgViewbox
+            Source="{Binding SelectedFileUri}"
+            Stretch="Uniform" />
+                    </Border>
+
+                </Grid>
             </DockPanel>
 
             <!-- Splitter -->
