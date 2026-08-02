@@ -74,7 +74,7 @@ public class GeminiProvider : ILLMProvider
 
                 var baseUrl = string.IsNullOrWhiteSpace(config.Endpoint) ? DefaultEndpoint : config.Endpoint.TrimEnd('/');
                 var url = $"{baseUrl}/interactions";
-                _notification.Notify($"Slanje poruke na Gemini: {url} (model: {config.Model})");
+                //_notification.Notify($"Slanje poruke na Gemini: {url} (model: {config.Model})");
                 using var request = new HttpRequestMessage(HttpMethod.Post, url) { Content = JsonContent.Create(body) };
                 request.Headers.Add("x-goog-api-key", config.ApiKey);
                 using var response = await _httpClient.SendAsync(request, cancellationToken);
