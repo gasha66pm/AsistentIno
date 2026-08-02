@@ -88,8 +88,13 @@
                 <!-- Editor -->
 
                 <Grid DockPanel.Dock="Bottom">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
                     <avalonedit:TextEditor
+        x:Name="CodeEditor"
         controls:AvalonEditBinding.Text="{Binding SelectedFileContent,
                                                  Mode=TwoWay,
                                                  UpdateSourceTrigger=PropertyChanged}"
@@ -104,13 +109,46 @@
         HorizontalScrollBarVisibility="Auto"
         VerticalScrollBarVisibility="Auto"
         Visibility="{Binding IsSvgFile,
-                             Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                             Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+        Grid.Row="0" />
+
+                    <!-- Find Panel -->
+                    <Border Grid.Row="1" Background="{StaticResource SecondaryBrush}" 
+                            Padding="8" Visibility="Collapsed" x:Name="FindPanel">
+                        <DockPanel>
+                            <Button DockPanel.Dock="Right" Content="✕" 
+                                    Click="CloseFindPanel_Click" Width="30" Height="30" 
+                                    Padding="0"
+                                    Margin="5,0,0,0" ToolTip="Zatvori (ESC)" />
+                            <Button DockPanel.Dock="Right" Content="▼" x:Name="FindNextBtn"
+                                    Click="FindNext_Click" Width="30" Height="30" 
+                                    Padding="0"
+                                    Margin="0,0,5,0" ToolTip="Sledeći" />
+                            <Button DockPanel.Dock="Right" Content="▲" x:Name="FindPrevBtn"
+                                    Click="FindPrevious_Click" Width="30" Height="30" 
+                                    Padding="0"
+                                    Margin="0,0,5,0" ToolTip="Prethodni" />
+                            <TextBlock DockPanel.Dock="Right" x:Name="MatchCountLabel" 
+                                       Foreground="{StaticResource TextBrush}" 
+                                       VerticalAlignment="Center" Margin="10,0" />
+                            <TextBox x:Name="FindTextBox"
+                                     Background="{StaticResource PrimaryBrush}"
+                                     Foreground="{StaticResource TextBrush}"
+                                     Padding="8,6" 
+                                     TextChanged="FindTextBox_TextChanged"
+                                     PreviewKeyDown="FindTextBox_PreviewKeyDown"
+                                     Margin="0,0,5,0"
+                                     ToolTip="Traži tekst (Ctrl+F)" />
+                        </DockPanel>
+                    </Border>
 
                     <Border
         Background="White"
         Padding="20"
         Visibility="{Binding IsSvgFile,
-                             Converter={StaticResource BooleanToVisibilityConverter}}">
+                             Converter={StaticResource BooleanToVisibilityConverter}}"
+        Grid.Row="0"
+        Grid.RowSpan="2">
 
                         <svgc:SvgViewbox
             Source="{Binding SelectedFileUri}"
@@ -153,6 +191,8 @@
                                     </Border.Style>
                                     <StackPanel>
                                         <DockPanel>
+                                            <TextBlock DockPanel.Dock="Left" Foreground="{StaticResource TextBrush}"
+                                                       VerticalAlignment="Center" Margin="0,0,8,0">Traži:</TextBlock>
                                             <Button DockPanel.Dock="Right"
                                                 Content="📋"
                                                 CommandParameter="{Binding Content}"
