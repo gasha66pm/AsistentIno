@@ -62,4 +62,18 @@ public partial class MainWindow : Window
 
         System.Windows.Clipboard.SetText(content);
     }
+
+    private void OpenCompileWindow_Click(object sender, RoutedEventArgs e)
+    {
+        var dlg = new Views.CompileWindow
+        {
+            Owner = this
+        };
+
+        var result = dlg.ShowDialog();
+        if (result == true)
+        {
+            // TODO: handle post-compile/upload actions if needed
+        }
+    }
 }

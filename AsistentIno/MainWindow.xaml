@@ -43,6 +43,8 @@
                     Command="{Binding OpenSettingsCommand}" Margin="0,0,10,0"/>
             <Button Content="💾 Snimi fajl" Style="{StaticResource MainButtonStyle}"
                     Command="{Binding SaveFileCommand}" Margin="0,0,10,0"/>
+            <Button Content="⚡ Compile" Style="{StaticResource MainButtonStyle}"
+                    Click="OpenCompileWindow_Click" Margin="0,0,10,0"/>
         </StackPanel>
         <!-- Status / Notifications -->
         <Border DockPanel.Dock="Bottom"
