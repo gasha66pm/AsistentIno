@@ -23,11 +23,15 @@ namespace AsistentIno
             // Core services
             services.AddSingleton<INotificationService, NotificationService>();
             services.AddSingleton<ConfigService>();
-            services.AddSingleton<FileService>();
+            services.AddSingleton<FileService>(sp => new FileService(sp.GetRequiredService<INotificationService>()));
             services.AddSingleton<IArduinoCliService>(sp => new ArduinoCliService(sp.GetRequiredService<ConfigService>().CurrentConfig.ArduinoCliPath));
 
             // Infrastructure
-            services.AddSingleton<ToolRegistry>();
+            services.AddSingleton<ToolRegistry>(sp => 
+                new ToolRegistry(
+                    sp.GetRequiredService<FileService>(),
+                    sp.GetRequiredService<IArduinoCliService>(),
+                    sp.GetRequiredService<INotificationService>()));
             services.AddSingleton<HttpClient>(new HttpClient { Timeout = TimeSpan.FromMinutes(20) });
             services.AddSingleton<LLMProviderFactory>();
 

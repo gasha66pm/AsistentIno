@@ -178,7 +178,10 @@ public class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
-        // try to obtain app-wide notification service (optional)
+        // try to obtain services from app-wide DI container
+        _fileService = App.Services?.GetService(typeof(FileService)) as FileService ?? throw new InvalidOperationException("FileService not registered in DI container");
+        _arduinoCliService = App.Services?.GetService(typeof(IArduinoCliService)) as IArduinoCliService ?? throw new InvalidOperationException("IArduinoCliService not registered in DI container");
+        _configService = App.Services?.GetService(typeof(ConfigService)) as ConfigService ?? throw new InvalidOperationException("ConfigService not registered in DI container");
         _notificationService = App.Services?.GetService(typeof(INotificationService)) as INotificationService;
 
         _toolRegistry = new ToolRegistry(_fileService, _arduinoCliService, _notificationService)

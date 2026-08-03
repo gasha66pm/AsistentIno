@@ -171,15 +171,27 @@ public sealed class ToolRegistry
             _notification?.Notify(msg);
             return ToolExecutionResult.Fail($"Nepoznat tool: {apiName}");
         }
-
         var startMsg = $"Pozivam alat: {tool.Descriptor.Id}...";
+        var path = string.Empty;
+        if (tool.Descriptor.Id == "file.readtext" || tool.Descriptor.Id == "file.writetext")
+        {
+             path = arguments.TryGetProperty("path", out var pathProp) && pathProp.ValueKind == JsonValueKind.String
+                ? pathProp.GetString() ?? string.Empty
+                : string.Empty;
+            if (!string.IsNullOrEmpty(path))
+            {
+                path = " fajl: " + path;
+                startMsg += $" ({path})";
+            }
+        }
+        
         StatusChanged?.Invoke(startMsg);
         _notification?.Notify(startMsg);
         try
         {
             var result = await tool.Handler(arguments, cancellationToken);
             var finished = result.Success
-                ? $"Alat {tool.Descriptor.Id} uspešno završen."
+                ? $"Alat {tool.Descriptor.Id} uspešno završen. {path}"
                 : $"Greška u alatu {tool.Descriptor.Id}: {result.Content}";
             StatusChanged?.Invoke(finished);
             _notification?.Notify(finished);

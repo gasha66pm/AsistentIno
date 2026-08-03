@@ -9,8 +9,14 @@ namespace AsistentIno.Services
 public class FileService
 {
     private string _currentFolder = "";
+    private readonly INotificationService _notificationService;
 
     public string CurrentFolder => _currentFolder;
+
+    public FileService(INotificationService notificationService)
+    {
+        _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+    }
 
     public void SetCurrentFolder(string path)
     {
