@@ -32,6 +32,7 @@ public class MainViewModel : ViewModelBase
     private string _dataFolder = "";
 
     private bool _isSyntaxHighlightingEnabled = true;
+    private bool _showMarkdownPreview;
 
     public bool IsSyntaxHighlightingEnabled
     {
@@ -43,6 +44,58 @@ public class MainViewModel : ViewModelBase
 
             _isSyntaxHighlightingEnabled = value;
             OnPropertyChanged();
+        }
+    }
+
+    public bool ShowMarkdownPreview
+    {
+        get => _showMarkdownPreview;
+        set
+        {
+            if (SetProperty(ref _showMarkdownPreview, value))
+            {
+                OnPropertyChanged(nameof(IsEditorVisible));
+                OnPropertyChanged(nameof(IsMarkdownPreviewVisible));
+            }
+        }
+    }
+
+    private void DeleteFile()
+    {
+        if (string.IsNullOrWhiteSpace(SelectedFilePath))
+            return;
+
+        var fileName = System.IO.Path.GetFileName(SelectedFilePath);
+        var result = System.Windows.MessageBox.Show(
+            $"Da li ste sigurni da želite da obrišete fajl '{fileName}'?",
+            "Potvrda brisanja",
+            System.Windows.MessageBoxButton.YesNo,
+            System.Windows.MessageBoxImage.Warning);
+
+        if (result != System.Windows.MessageBoxResult.Yes)
+            return;
+
+        try
+        {
+            _fileService.DeleteFile(SelectedFilePath);
+            OpenFiles.Clear();
+            foreach (var file in _fileService.GetCodeFiles())
+                OpenFiles.Add(file);
+
+            var newSelected = OpenFiles.FirstOrDefault();
+            SelectedFilePath = newSelected ?? string.Empty;
+            if (string.IsNullOrEmpty(newSelected))
+                SelectedFileContent = string.Empty;
+            StatusMessage = $"Obrisan fajl: {fileName}";
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(
+                $"Greška pri brisanju fajla: {ex.Message}",
+                "Greška",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Error);
+            StatusMessage = $"Greška pri brisanju fajla: {ex.Message}";
         }
     }
 
@@ -62,6 +115,10 @@ public class MainViewModel : ViewModelBase
 
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsSvgFile));
+            OnPropertyChanged(nameof(IsMarkdownFile));
+            OnPropertyChanged(nameof(IsEditorVisible));
+            OnPropertyChanged(nameof(IsMarkdownPreviewVisible));
+            OnPropertyChanged(nameof(IsInoFile));
             OnPropertyChanged(nameof(SelectedFileUri));
 
             LoadFileContent();
@@ -74,6 +131,24 @@ public class MainViewModel : ViewModelBase
         Path.GetExtension(SelectedFilePath),
         ".svg",
         StringComparison.OrdinalIgnoreCase);
+
+    public bool IsMarkdownFile =>
+        !string.IsNullOrWhiteSpace(SelectedFilePath) &&
+        string.Equals(
+            Path.GetExtension(SelectedFilePath),
+            ".md",
+            StringComparison.OrdinalIgnoreCase);
+
+    public bool IsEditorVisible => !IsSvgFile && !(IsMarkdownFile && ShowMarkdownPreview);
+
+    public bool IsMarkdownPreviewVisible => IsMarkdownFile && ShowMarkdownPreview;
+
+    public bool IsInoFile =>
+        !string.IsNullOrWhiteSpace(SelectedFilePath) &&
+        string.Equals(
+            Path.GetExtension(SelectedFilePath),
+            ".ino",
+            StringComparison.OrdinalIgnoreCase);
 
     public Uri? SelectedFileUri
     {
@@ -175,6 +250,8 @@ public class MainViewModel : ViewModelBase
 
     public ICommand ClearHistoryCommand { get; }
     public ICommand SaveFileCommand { get; }
+    public ICommand NewFileCommand { get; }
+    public ICommand DeleteFileCommand { get; }
 
     public MainViewModel()
     {
@@ -203,6 +280,8 @@ public class MainViewModel : ViewModelBase
         AttachFileCommand = new RelayCommand(AttachFile, () => !IsAgentBusy || IsWaitingForInteractiveAnswer);
         RemoveAttachmentCommand = new RelayCommand(() => PendingAttachment = null, () => HasPendingAttachment);
         SaveFileCommand = new RelayCommand(SaveFile, () => !string.IsNullOrWhiteSpace(SelectedFilePath));
+        NewFileCommand = new RelayCommand(NewFile);
+        DeleteFileCommand = new RelayCommand(DeleteFile, () => !string.IsNullOrWhiteSpace(SelectedFilePath));
         LoadAgents();
         _dataFolder = _fileService.CurrentFolder;
     }
@@ -233,6 +312,8 @@ public class MainViewModel : ViewModelBase
         AttachFileCommand = new RelayCommand(AttachFile, () => !IsAgentBusy || IsWaitingForInteractiveAnswer);
         RemoveAttachmentCommand = new RelayCommand(() => PendingAttachment = null, () => HasPendingAttachment);
         SaveFileCommand = new RelayCommand(SaveFile, () => !string.IsNullOrWhiteSpace(SelectedFilePath));
+        NewFileCommand = new RelayCommand(NewFile);
+        DeleteFileCommand = new RelayCommand(DeleteFile, () => !string.IsNullOrWhiteSpace(SelectedFilePath));
 
         LoadAgents();
         _dataFolder = _fileService.CurrentFolder;
@@ -241,14 +322,59 @@ public class MainViewModel : ViewModelBase
             _dataFolder = configService.CurrentConfig.LastOpenedFolder;
             _fileService.SetCurrentFolder(_dataFolder);
         }
+
         if (!string.IsNullOrEmpty(_dataFolder))
         {
             foreach (var file in _fileService.GetCodeFiles())
                 OpenFiles.Add(file);
             SelectedFilePath = OpenFiles.FirstOrDefault() ?? "";
         }
-
     }
+
+    private void NewFile()
+    {
+        if (string.IsNullOrWhiteSpace(_fileService.CurrentFolder))
+        {
+            System.Windows.MessageBox.Show(
+                "Workspace folder nije izabran. Odaberite folder pre kreiranja fajla.",
+                "Upozorenje",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Warning);
+            StatusMessage = "Workspace folder nije izabran.";
+            return;
+        }
+
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Title = "Kreiraj novi fajl",
+            Filter = "Arduino Sketch (*.ino)|*.ino|C++ Source (*.cpp)|*.cpp|C++ Header (*.h)|*.h|Text file (*.txt)|*.txt",
+            FileName = "newfile",
+            InitialDirectory = _fileService.CurrentFolder
+        };
+
+        if (dialog.ShowDialog() != true)
+            return;
+
+        try
+        {
+            var selectedPath = dialog.FileName;
+            _fileService.WriteFile(selectedPath, string.Empty);
+            OpenFiles.Clear();
+            foreach (var file in _fileService.GetCodeFiles())
+                OpenFiles.Add(file);
+            SelectedFilePath = selectedPath;
+            StatusMessage = $"Kreiran fajl: {System.IO.Path.GetFileName(selectedPath)}";
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(
+                $"Greška pri kreiranju fajla: {ex.Message}",
+                "Greška",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Error);
+            StatusMessage = $"Greška pri kreiranju fajla: {ex.Message}";
+        }
+        }
 
     private void OnToolRegistryStatusChanged(string message)
     {
@@ -313,7 +439,7 @@ public class MainViewModel : ViewModelBase
         try
         {
             SelectedFileContent = _fileService.ReadFile(SelectedFilePath);
-            if (SelectedFilePath.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
+            if (SelectedFilePath.EndsWith(".txt", StringComparison.OrdinalIgnoreCase) || SelectedFilePath.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
                 IsSyntaxHighlightingEnabled = false;
             else
                 IsSyntaxHighlightingEnabled = true;

@@ -58,7 +58,7 @@ public class FileService
         if (string.IsNullOrEmpty(_currentFolder))
             return new List<string>();
 
-        var extensions = new[] { ".cpp", ".h", ".ino", ".c", ".hpp",".txt",".svg",".json" };
+        var extensions = new[] { ".cpp", ".h", ".ino", ".c", ".hpp", ".txt", ".md", ".svg", ".json" };
         var files = Directory.GetFiles(_currentFolder, "*.*", SearchOption.AllDirectories)
             .Where(f => extensions.Contains(Path.GetExtension(f).ToLower()))
             .ToList();

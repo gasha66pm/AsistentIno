@@ -35,17 +35,26 @@
                            MaxWidth="700" />
             </DockPanel>
         </Border>
-        <!-- Toolbar -->
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="{StaticResource SecondaryBrush}" Margin="10">
-            <Button Content="📁 Odaberi folder" Style="{StaticResource MainButtonStyle}" 
-                    Command="{Binding SelectFolderCommand}" Margin="0,0,10,0"/>
-            <Button Content="⚙️ Konfiguracija" Style="{StaticResource MainButtonStyle}"
-                    Command="{Binding OpenSettingsCommand}" Margin="0,0,10,0"/>
-            <Button Content="💾 Snimi fajl" Style="{StaticResource MainButtonStyle}"
-                    Command="{Binding SaveFileCommand}" Margin="0,0,10,0"/>
-            <Button Content="⚡ Compile" Style="{StaticResource MainButtonStyle}"
-                    Click="OpenCompileWindow_Click" Margin="0,0,10,0"/>
-        </StackPanel>
+        <!-- Toolbar replaced by menu -->
+        <Menu DockPanel.Dock="Top" Background="{StaticResource SecondaryBrush}" Margin="10">
+            <MenuItem Header="File">
+                <MenuItem Header="📁 Odaberi folder" Command="{Binding SelectFolderCommand}" />
+                <MenuItem Header="➕ Novi fajl" Command="{Binding NewFileCommand}" />
+                <MenuItem Header="🗑️ Obriši fajl" Command="{Binding DeleteFileCommand}" />
+                <Separator />
+                <MenuItem Header="💾 Snimi fajl" Command="{Binding SaveFileCommand}" />
+            </MenuItem>
+
+            <MenuItem Header="Akcija">
+                <MenuItem Header="Preview Markdown" IsCheckable="True" IsChecked="{Binding ShowMarkdownPreview}" IsEnabled="{Binding IsMarkdownFile}" />
+                <Separator />
+                <MenuItem Header="⚡ Compile" Click="OpenCompileWindow_Click" IsEnabled="{Binding IsInoFile}" />
+            </MenuItem>
+
+            <MenuItem Header="Konfiguracija">
+                <MenuItem Header="⚙️ Konfiguracija" Command="{Binding OpenSettingsCommand}" />
+            </MenuItem>
+        </Menu>
         <!-- Status / Notifications -->
         <Border DockPanel.Dock="Bottom"
                         Padding="1" Margin="1,0,1,1" CornerRadius="4" MinHeight="20" MaxHeight="20" Height="20" Background="#FFDBE9E9">
@@ -108,9 +117,16 @@
         WordWrap="False"
         HorizontalScrollBarVisibility="Auto"
         VerticalScrollBarVisibility="Auto"
-        Visibility="{Binding IsSvgFile,
-                             Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+        Visibility="{Binding IsEditorVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
         Grid.Row="0" />
+
+                    <md:MarkdownScrollViewer
+                        Markdown="{Binding SelectedFileContent}"
+                        Background="{StaticResource PrimaryBrush}"
+                        Foreground="{StaticResource TextBrush}"
+                        Visibility="{Binding IsMarkdownPreviewVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Grid.Row="0"
+                        />
 
                     <!-- Find Panel -->
                     <Border Grid.Row="1" Background="{StaticResource SecondaryBrush}" 
