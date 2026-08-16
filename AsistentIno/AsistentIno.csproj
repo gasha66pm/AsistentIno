@@ -23,6 +23,7 @@
   <ItemGroup>
     <Folder Include="Assets\" />
     <Folder Include="Data\" />
+    <Folder Include="installer\" />
     <Folder Include="ViewModels\" />
   </ItemGroup>
 
