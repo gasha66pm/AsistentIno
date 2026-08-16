@@ -51,7 +51,8 @@ jobs:
         shell: pwsh
         run: |
           $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
-
+          $iss = Join-Path $env:GITHUB_WORKSPACE "installer\AsistentIno.iss"
+          
           if (-not (Test-Path $iscc)) {
             throw "Inno Setup compiler nije pronadjen: $iscc"
           }
