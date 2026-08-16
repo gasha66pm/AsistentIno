@@ -15,7 +15,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="asistentino_w.ico" />
+    <Content Include="asistentino_w.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 
