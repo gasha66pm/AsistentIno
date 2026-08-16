@@ -21,7 +21,7 @@ DisableProgramGroupPage=yes
 OutputDir=output
 OutputBaseFilename=AsistentIno-Setup-{#MyAppVersion}
 
-SetupIconFile=..\AsistentIno\asistentino_w.ico
+SetupIconFile=..\asistentino_w.ico
 
 Compression=lzma2
 SolidCompression=yes
