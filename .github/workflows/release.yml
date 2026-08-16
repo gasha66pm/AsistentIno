@@ -1,0 +1,150 @@
+name: Build and Release AsistentIno
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    name: Build Windows Installer
+    runs-on: windows-latest
+
+    steps:
+
+      # -------------------------------------------------------
+      # Checkout private source repository
+      # -------------------------------------------------------
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # -------------------------------------------------------
+      # Install .NET 10 SDK
+      # -------------------------------------------------------
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Show .NET version
+        run: dotnet --version
+
+      # -------------------------------------------------------
+      # Determine version from Git tag
+      #
+      # v1.2.3 -> 1.2.3
+      # -------------------------------------------------------
+
+      - name: Determine version
+        id: version
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $version = $tag.TrimStart('v')
+
+          echo "VERSION=$version" >> $env:GITHUB_ENV
+
+          Write-Host "Git tag: $tag"
+          Write-Host "Application version: $version"
+
+      # -------------------------------------------------------
+      # Restore
+      # -------------------------------------------------------
+
+      - name: Restore
+        run: dotnet restore
+
+      # -------------------------------------------------------
+      # Build
+      # -------------------------------------------------------
+
+      - name: Build
+        run: >
+          dotnet build
+          -c Release
+          --no-restore
+          -p:Version=${{ env.VERSION }}
+
+      # -------------------------------------------------------
+      # Publish WPF application
+      # -------------------------------------------------------
+
+      - name: Publish
+        shell: pwsh
+        run: |
+          dotnet publish `
+            .\AsistentIno.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            --no-restore `
+            -p:PublishSingleFile=true `
+            -p:Version=${{ env.VERSION }} `
+            -o .\publish
+
+      # -------------------------------------------------------
+      # Show generated files - useful for debugging
+      # -------------------------------------------------------
+
+      - name: Show publish files
+        shell: pwsh
+        run: |
+          Get-ChildItem .\publish -Recurse
+
+      # -------------------------------------------------------
+      # Install Inno Setup
+      # -------------------------------------------------------
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: |
+          choco install innosetup --no-progress -y
+
+      # -------------------------------------------------------
+      # Build installer
+      # -------------------------------------------------------
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+
+          if (-not (Test-Path $iscc)) {
+              throw "Inno Setup compiler not found: $iscc"
+          }
+
+          & $iscc `
+            "/DMyAppVersion=${{ env.VERSION }}" `
+            ".\installer\AsistentIno.iss"
+
+      # -------------------------------------------------------
+      # Check installer
+      # -------------------------------------------------------
+
+      - name: Show installer
+        shell: pwsh
+        run: |
+          Get-ChildItem .\installer\output
+
+      # -------------------------------------------------------
+      # Publish installer to PUBLIC repository
+      # -------------------------------------------------------
+
+      - name: Create public GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          $installer = ".\installer\output\AsistentIno-Setup-${{ env.VERSION }}.exe"
+
+          if (-not (Test-Path $installer)) {
+              throw "Installer not found: $installer"
+          }
+
+          gh release create "${{ github.ref_name }}" `
+            "$installer" `
+            --repo gasha66pm/AsistentIno-Releases `
+            --title "AsistentIno ${{ env.VERSION }}" `
+            --generate-notes
