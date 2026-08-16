@@ -42,27 +42,19 @@ jobs:
             -p:Version=${{ inputs.version }} `
             -o .\publish
 
-      - name: Install Inno Setup
+      - name: Create ZIP
         shell: pwsh
         run: |
-          choco install innosetup --no-progress -y
+          $version = "${{ inputs.version }}"
+          $zip = ".\AsistentIno-$version-win-x64.zip"
 
-      - name: Build installer
-        shell: pwsh
-        run: |
-          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
-          $iss = Join-Path $env:GITHUB_WORKSPACE "installer\AsistentIno.iss"
-          
-          if (-not (Test-Path $iscc)) {
-            throw "Inno Setup compiler nije pronadjen: $iscc"
-          }
+          Compress-Archive `
+            -Path ".\publish\*" `
+            -DestinationPath $zip `
+            -Force
 
-          & $iscc `
-            "/DMyAppVersion=${{ inputs.version }}" `
-            ".\installer\AsistentIno.iss"
-
-          if ($LASTEXITCODE -ne 0) {
-            throw "Inno Setup build failed."
+          if (-not (Test-Path $zip)) {
+            throw "ZIP nije kreiran: $zip"
           }
 
       - name: Create public GitHub Release
@@ -71,14 +63,14 @@ jobs:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         run: |
           $version = "${{ inputs.version }}"
-          $installer = ".\installer\output\AsistentIno-Setup-$version.exe"
+          $zip = ".\AsistentIno-$version-win-x64.zip"
 
-          if (-not (Test-Path $installer)) {
-            throw "Installer nije pronadjen: $installer"
+          if (-not (Test-Path $zip)) {
+            throw "ZIP nije pronadjen: $zip"
           }
 
           gh release create "v$version" `
-            "$installer" `
+            "$zip" `
             --repo gasha66pm/AsistentIno-Releases `
             --title "AsistentIno $version" `
             --generate-notes
