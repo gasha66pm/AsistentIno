@@ -1,9 +1,12 @@
 name: Build and Release AsistentIno
 
 on:
-  push:
-    tags:
-      - "v*"
+ workflow_dispatch:
+    inputs:
+      version:
+        description: "Verzija za release, npr. 1.0.0"
+        required: true
+        default: "1.0.0"
 
 jobs:
   release:
