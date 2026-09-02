@@ -1,5 +1,6 @@
 using AsistentIno.Models;
 using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -85,11 +86,11 @@ public class ArduinoCliService : IArduinoCliService
     public Task<string> ListInstalledLibrariesAsync(CancellationToken cancellationToken = default) =>
         RunCommandAsync(["lib", "list"], cancellationToken);
 
-    public Task<string> CompileAsync(string sketchPath, string fqbn, CancellationToken cancellationToken) =>
-        RunCommandAsync(["compile", "--fqbn", fqbn, sketchPath], cancellationToken);
+    public Task<string> CompileAsync(string sketchPath, string fqbn, CancellationToken cancellationToken, IProgress<string>? progress = null) =>
+        RunCommandAsync(["compile", "--fqbn", fqbn, sketchPath], cancellationToken, progress);
 
-    public Task<string> UploadAsync(string sketchPath, string port, string fqbn, CancellationToken cancellationToken) =>
-    RunCommandAsync(["upload", sketchPath, "-p", port,"-b", fqbn], cancellationToken);
+    public Task<string> UploadAsync(string sketchPath, string port, string fqbn, CancellationToken cancellationToken, IProgress<string>? progress = null) =>
+    RunCommandAsync(["upload", sketchPath, "-p", port,"-b", fqbn], cancellationToken, progress);
 
     public async Task<List<string>> ListBoardsAsync() =>
         (await RunCommandAsync(["board", "list"], CancellationToken.None))
@@ -101,7 +102,7 @@ public class ArduinoCliService : IArduinoCliService
 
     public Task<string> CompileAsync(string sketchPath, string fqbn) => CompileAsync(sketchPath, fqbn, CancellationToken.None);
 
-    private async Task<string> RunCommandAsync(IReadOnlyList<string> args, CancellationToken cancellationToken)
+    private async Task<string> RunCommandAsync(IReadOnlyList<string> args, CancellationToken cancellationToken, IProgress<string>? progress = null)
     {
         var startInfo = new ProcessStartInfo
         {
@@ -123,16 +124,32 @@ public class ArduinoCliService : IArduinoCliService
             throw new InvalidOperationException($"Arduino CLI nije moguće pokrenuti: {ex.Message}", ex);
         }
 
-        var stdoutTask = process.StandardOutput.ReadToEndAsync(cancellationToken);
-        var stderrTask = process.StandardError.ReadToEndAsync(cancellationToken);
-        await process.WaitForExitAsync(cancellationToken);
-        var stdout = await stdoutTask;
-        var stderr = await stderrTask;
+        var stdout = new StringBuilder();
+        var stderr = new StringBuilder();
+        var stdoutTask = ReadStreamAsync(process.StandardOutput, stdout, progress, cancellationToken);
+        var stderrTask = ReadStreamAsync(process.StandardError, stderr, progress, cancellationToken);
+        await Task.WhenAll(process.WaitForExitAsync(cancellationToken), stdoutTask, stderrTask);
 
         if (process.ExitCode != 0)
-            throw new InvalidOperationException(string.IsNullOrWhiteSpace(stderr) ? $"arduino-cli je završio kodom {process.ExitCode}." : stderr.Trim());
+            throw new InvalidOperationException(stderr.Length == 0 ? $"arduino-cli je završio kodom {process.ExitCode}." : stderr.ToString().Trim());
 
-        return string.IsNullOrWhiteSpace(stderr) ? stdout.Trim() : $"{stdout.Trim()}\n{stderr.Trim()}".Trim();
+        var standardOutput = stdout.ToString().Trim();
+        var standardError = stderr.ToString().Trim();
+        return string.IsNullOrWhiteSpace(standardError) ? standardOutput : $"{standardOutput}\n{standardError}".Trim();
+    }
+
+    private static async Task ReadStreamAsync(
+        StreamReader reader,
+        StringBuilder output,
+        IProgress<string>? progress,
+        CancellationToken cancellationToken)
+    {
+        string? line;
+        while ((line = await reader.ReadLineAsync(cancellationToken)) is not null)
+        {
+            output.AppendLine(line);
+            progress?.Report(line);
+        }
     }
 
     private static string GetEffectivePath(string? path) =>

@@ -178,9 +178,14 @@
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="{StaticResource SecondaryBrush}"/>
 
             <!-- Right: Agent Section -->
-            <DockPanel Grid.Column="2" Background="{StaticResource PrimaryBrush}" LastChildFill="False">
+             <Grid Grid.Column="2" Background="{StaticResource PrimaryBrush}">
+                 <Grid.RowDefinitions>
+                     <RowDefinition Height="Auto" />
+                     <RowDefinition Height="*" />
+                     <RowDefinition Height="Auto" />
+                 </Grid.RowDefinitions>
                 <!-- Agent Selector -->
-                <StackPanel DockPanel.Dock="Top" Background="{StaticResource SecondaryBrush}" Margin="10">
+                 <StackPanel Grid.Row="0" Background="{StaticResource SecondaryBrush}" Margin="10">
                     <TextBlock Text="Agent:" FontSize="12" FontWeight="Bold" Margin="0,0,0,5"/>
                     <ComboBox ItemsSource="{Binding AvailableAgents}"
                               SelectedItem="{Binding SelectedAgent}"
@@ -189,8 +194,8 @@
                 </StackPanel>
 
                 <!-- Messages -->
-                <ScrollViewer x:Name="AgentMessagesScrollViewer" DockPanel.Dock="Top" VerticalScrollBarVisibility="Auto" 
-                              Height="360" Margin="0,10,0,10">
+                 <ScrollViewer x:Name="AgentMessagesScrollViewer" Grid.Row="1" VerticalScrollBarVisibility="Auto" 
+                               Margin="0,10,0,10">
                     <ItemsControl ItemsSource="{Binding AgentMessages}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -252,7 +257,7 @@
                 </ScrollViewer>
 
                 <!-- User Input -->
-                <StackPanel DockPanel.Dock="Bottom" Margin="10">
+                 <StackPanel Grid.Row="2" Margin="10">
                     <TextBlock Text="Vaša poruka:" FontSize="11" Margin="0,0,0,5"/>
                     <Border Background="{StaticResource SecondaryBrush}"
                             Padding="8" Margin="0,0,0,8" CornerRadius="4">
@@ -286,10 +291,10 @@
                             <Button Content="✕" DockPanel.Dock="Right"
                                     Command="{Binding RemoveAttachmentCommand}"
                                     Padding="6,0" Margin="8,0,0,0"/>
-                            <TextBlock Text="{Binding PendingAttachment.FileName, StringFormat='📎 {0}'}"
-                                       Foreground="{StaticResource TextBrush}"
-                                       VerticalAlignment="Center"/>
-                        </DockPanel>
+                             <TextBlock Text="{Binding PendingAttachment.FileName, StringFormat='📎 {0}'}"
+                                        Foreground="{StaticResource TextBrush}"
+                                        VerticalAlignment="Center"/>
+                         </DockPanel>
                     </Border>
                     <TextBox Text="{Binding UserMessage, UpdateSourceTrigger=PropertyChanged}"
                              Background="{StaticResource SecondaryBrush}"
@@ -316,7 +321,7 @@
                 </StackPanel>
 
 
-            </DockPanel>
+             </Grid>
         </Grid>
     </DockPanel>
 </Window>

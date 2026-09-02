@@ -144,17 +144,31 @@ public partial class CompileWindow : Window
 
     private async void Ok_Click(object sender, RoutedEventArgs e)
     {
+        OutputText.Clear();
+        var progress = new Progress<string>(line =>
+        {
+            Dispatcher.Invoke(() =>
+            {
+                OutputText.AppendText(line + Environment.NewLine);
+                OutputText.ScrollToEnd();
+            });
+        });
+
         // if Compile chosen, try to run compile (best-effort)
         if (string.Equals(Action, "Compile", StringComparison.OrdinalIgnoreCase))
         {
             try
             {
                 StatusText.Text = "Pokrećem kompilaciju...";
-                await _arduinoCli.CompileAsync(FileName, SelectedFqbn);
+                await _arduinoCli.CompileAsync(FileName, SelectedFqbn, CancellationToken.None, progress);
+                StatusText.Text = "Kompajliranje završeno.";
                 _notificationService.Notify("Kompajliranje završeno.");
             }
             catch (Exception ex)
             {
+                if (string.IsNullOrWhiteSpace(OutputText.Text))
+                    OutputText.Text = ex.Message;
+                StatusText.Text = "Kompajliranje nije uspelo.";
                 _notificationService.Notify($"Greška pri kompajliranju: {ex.Message}");
                 return;
             }
@@ -164,20 +178,22 @@ public partial class CompileWindow : Window
             // if Upload chosen, try to run upload (best-effort)
             try
             {
-                _notificationService.Notify("Pokrećem upload...");
-                await _arduinoCli.UploadAsync(FileName, SelectedPort, SelectedFqbn, CancellationToken.None);
+                StatusText.Text = "Pokrećem upload...";
+                await _arduinoCli.UploadAsync(FileName, SelectedPort, SelectedFqbn, CancellationToken.None, progress);
+                StatusText.Text = "Upload završen.";
                 _notificationService.Notify("Upload završen.");
             }
             catch (Exception ex)
             {
+                if (string.IsNullOrWhiteSpace(OutputText.Text))
+                    OutputText.Text = ex.Message;
+                StatusText.Text = "Upload nije uspeo.";
                 _notificationService.Notify($"Greška pri upload-u: {ex.Message}");
                 return;
             }
         }
 
-        // Upload is not implemented here; caller can use SelectedConnectedBoard
-        DialogResult = true;
-        Close();
+        OutputText.ScrollToEnd();
     }
 
     private void Cancel_Click(object sender, RoutedEventArgs e)

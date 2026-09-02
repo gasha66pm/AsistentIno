@@ -18,8 +18,8 @@ public interface IArduinoCliService
 
     Task<string> ListAllLibrariesAsync(CancellationToken cancellationToken = default);
 
-    Task<string> CompileAsync(string sketchPath, string fqbn, CancellationToken cancellationToken = default);
-    Task<string> UploadAsync(string sketchPath, string port, string fqbn, CancellationToken cancellationToken);
+    Task<string> CompileAsync(string sketchPath, string fqbn, CancellationToken cancellationToken = default, IProgress<string>? progress = null);
+    Task<string> UploadAsync(string sketchPath, string port, string fqbn, CancellationToken cancellationToken, IProgress<string>? progress = null);
 
     Task<List<string>> ListBoardsAsync();
 
